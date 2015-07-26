@@ -2,6 +2,7 @@ frontend-nanodegree-arcade-game
 ===============================
 How to play?
 
+-- Start by opening the index.html page in a browser.
 -- Use arrow keys to move left/right up/down.
 -- Your goal is to get to the key.
 -- You can get bonus points by collecting the blue gems.

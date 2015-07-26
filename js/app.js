@@ -1,3 +1,4 @@
+"use strict";
 var CELL_WIDTH = 101;
 var CELL_HEIGHT = 83;
 
@@ -110,13 +111,8 @@ Player.prototype.handleInput = function(key) {
         var tempHeight = this.y - CELL_HEIGHT;
         var newX = getX(this.x);
         var newY = getY(tempHeight);
-        if(tempHeight > -CELL_HEIGHT && isObstacle(newX, newY)) {
+        if(tempHeight > 0 && isObstacle(newX, newY)) {
             this.y = tempHeight;
-            if (this.y + CELL_HEIGHT <= CELL_HEIGHT) {
-                this.x = PLAYER_START_X;
-                this.y = PLAYER_START_Y;
-                console.log("You won!")
-            }
         }
     }
     else

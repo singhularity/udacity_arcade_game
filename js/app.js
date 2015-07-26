@@ -16,13 +16,13 @@ Character.prototype.render = function() {
 //Cell position X of the Character on the Grid
 Character.prototype.getCellX = function()
 {
-    return Math.ceil((this.x+50)/cellWidth)
+    return getX(this.x+50);
 };
 
 //Cell position Y of the Character on the Grid
 Character.prototype.getCellY = function()
 {
-    return Math.ceil((this.y+42)/cellHeight);
+    return getY(this.y+42);
 };
 
 //Update the position of the Character on the screen
@@ -86,23 +86,26 @@ Player.prototype = Object.create(Character.prototype);
 Player.prototype.handleInput = function(key){
     if (key === 'left')
     {
-        if(this.x - cellWidth > -cellWidth) {
-            this.x -= cellWidth;
+        var tempWidth = this.x - cellWidth;
+        if(tempWidth > -cellWidth && obstacleIndices.indexOf(getX(tempWidth)+ "" + getY(this.y)) === -1) {
+            this.x = tempWidth;
             //console.log("x - " + Math.ceil((this.x+101)/101));
         }
 
     }
     else if (key === 'right')
     {
-        if(this.x + cellWidth < ctx.canvas.width - cellWidth) {
-            this.x += cellWidth;
+        var tempWidth = this.x + cellWidth;
+        if(tempWidth < ctx.canvas.width - cellWidth && obstacleIndices.indexOf(getX(tempWidth) + "" + getY(this.y)) === -1) {
+            this.x = tempWidth;
             //console.log("x - " + Math.ceil((this.x+101)/101));
         }
     }
     else if (key === 'up')
     {
-        if(this.y - cellHeight > -cellHeight) {
-            this.y -= cellHeight;
+        var tempHeight = this.y - cellHeight;
+        if(tempHeight > -cellHeight   && obstacleIndices.indexOf(getX(this.x) + "" + getY(tempHeight)) === -1) {
+            this.y = tempHeight;
             //console.log("y - " + Math.ceil((this.y+83)/83));
             if (this.y + cellHeight <= cellHeight) {
                 this.x = playerStartX;
@@ -115,19 +118,36 @@ Player.prototype.handleInput = function(key){
     }
     else
     {
-        if(this.y + cellHeight < (ctx.canvas.width - cellHeight)) {
-            this.y += cellHeight;
-            //console.log("y - " + Math.ceil((this.y+83)/83));
+        var tempHeight = this.y + cellHeight;
+        if(tempHeight < ctx.canvas.width - cellHeight  && obstacleIndices.indexOf(getX(this.x) + "" + getY(tempHeight)) === -1) {
+            this.y = tempHeight;
         }
     }
 };
+
+var Obstacle = function(x, y)
+{
+    this.sprite = 'images/Rock.png';
+    this.x = x;
+    this.y = y;
+};
+
+//Inherit from Character
+Obstacle.prototype = Object.create(Character.prototype);
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var allEnemies = [new Enemy(), new Enemy(), new Enemy()];
 var player = new Player();
-
+var obstacleLocations = [[0, 42], [202, 208]];
+var obstacleIndices = [];
+var obstacles = [];
+for(var index = 0; index < obstacleLocations.length; index++)
+{
+    obstacles[index] = new Obstacle(obstacleLocations[index][0], obstacleLocations[index][1]);
+    obstacleIndices[index] = obstacles[index].getCellX() + "" + obstacles[index].getCellY();
+};
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -141,3 +161,15 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+//Cell position X of the Character on the Grid
+function getX(x)
+{
+    return Math.ceil((x+50)/cellWidth)
+};
+
+//Cell position Y of the Character on the Grid
+function getY(y)
+{
+    return Math.ceil((y+42)/cellHeight);
+};

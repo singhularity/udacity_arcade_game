@@ -6,6 +6,7 @@ var playerStartY = 380;
 
 var minSpeed = 200;
 
+/*Character Represents any renderable object in the Game*/
 var Character = function(){};
 
 // Draw the Character on the screen, required method for game
@@ -28,6 +29,7 @@ Character.prototype.getCellY = function()
 //Update the position of the Character on the screen
 Character.prototype.update = function(dt) {};
 
+/* Enemy is of type Character and represents bugs which kill the hero */
 // Enemies our player must avoid
 var Enemy = function() {
     // Variables applied to each of our instances go here,
@@ -63,6 +65,7 @@ Enemy.prototype.update = function(dt) {
     }
 };
 
+/* Player is of type character and represents the games hero */
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
@@ -137,6 +140,7 @@ Player.prototype.handleInput = function(key){
     }
 };
 
+/* Obstacle is of type Character */
 var Obstacle = function(x, y)
 {
     this.sprite = 'images/Rock.png';
@@ -147,6 +151,8 @@ var Obstacle = function(x, y)
 //Inherit from Character
 Obstacle.prototype = Object.create(Character.prototype);
 
+
+/* Gem is of type Character and represents bonus points */
 var Gem = function(x, y)
 {
     this.sprite = 'images/Gem Blue.png';
@@ -163,32 +169,6 @@ Gem.prototype.setKeyGoal = function () {
     this.isKey = true;
 };
 
-var allEnemies, player, obstacleIndices, obstacles, gemIndices, gems;
-
-function startGame() {
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-    allEnemies = [new Enemy(), new Enemy(), new Enemy()];
-    player = new Player();
-    var obstacleLocations = [[0, 42], [202, 208]];
-    obstacleIndices = [];
-    obstacles = [];
-    for (var index = 0; index < obstacleLocations.length; index++) {
-        obstacles[index] = new Obstacle(obstacleLocations[index][0], obstacleLocations[index][1]);
-        obstacleIndices[index] = obstacles[index].getCellX() + "" + obstacles[index].getCellY();
-    }
-
-    var gemLocations = [[0, 208], [404, 125], [202, 42]];
-    gemIndices = [];
-    gems = [];
-    for (var index = 0; index < gemLocations.length; index++) {
-        gems[index] = new Gem(gemLocations[index][0], gemLocations[index][1]);
-        gemIndices[index] = gems[index].getCellX() + "" + gems[index].getCellY();
-    }
-
-    gems[2].setKeyGoal();
-}
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
@@ -214,12 +194,42 @@ function getY(y)
     return Math.ceil((y+42)/cellHeight);
 };
 
+//Check if cell is an obstacle
 function isObstacle(x, y)
 {
     return obstacleIndices.indexOf(x + "" + y) === -1;
 }
 
+//Check if cell has a Gem
 function isGem(x, y)
 {
     return gemIndices.indexOf(x + "" + y) !== -1;
+}
+
+/* Code below will initialize and start the Games enemies, player, obstacles and gems */
+var allEnemies, player, obstacleIndices, obstacles, gemIndices, gems;
+
+function startGame() {
+// Now instantiate your objects.
+// Place all enemy objects in an array called allEnemies
+// Place the player object in a variable called player
+    allEnemies = [new Enemy(), new Enemy(), new Enemy()];
+    player = new Player();
+    var obstacleLocations = [[0, 42], [202, 208]];
+    obstacleIndices = [];
+    obstacles = [];
+    for (var index = 0; index < obstacleLocations.length; index++) {
+        obstacles[index] = new Obstacle(obstacleLocations[index][0], obstacleLocations[index][1]);
+        obstacleIndices[index] = obstacles[index].getCellX() + "" + obstacles[index].getCellY();
+    }
+
+    var gemLocations = [[0, 208], [404, 125], [202, 42]];
+    gemIndices = [];
+    gems = [];
+    for (var index = 0; index < gemLocations.length; index++) {
+        gems[index] = new Gem(gemLocations[index][0], gemLocations[index][1]);
+        gemIndices[index] = gems[index].getCellX() + "" + gems[index].getCellY();
+    }
+
+    gems[2].setKeyGoal();
 }

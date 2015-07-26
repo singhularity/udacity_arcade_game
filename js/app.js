@@ -1,3 +1,12 @@
+/**
+ *
+ * Author: Saurabh Singh
+ * All the Game related Characters are implemented here. Implements the Enemy, Player, Obstacle and Gem characters.
+ * Only Enemy and Player move, Obstacles and Gems are stationary
+ * We assume a fixed size grid and there is no support yet for a Dynamic Grid.
+ *
+ */
+
 "use strict";
 var CELL_WIDTH = 101;
 var CELL_HEIGHT = 83;
@@ -9,10 +18,16 @@ var MIN_SPEED = 200;
 
 var score = 0;
 
-/*Character Represents any renderable object in the Game*/
+/**
+ * Character Represents any object in the Game that can be Rendered.
+ * It will act as the "Parent" for all other Characters in the Game
+ * */
 var Character = function() {};
 
-// Draw the Character on the screen, required method for game
+/**
+ * Draw the Character on the screen using Resources, required method for game
+  */
+
 Character.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
@@ -30,8 +45,11 @@ Character.prototype.getCellY = function() {
 //Update the position of the Character on the screen
 Character.prototype.update = function(dt) {};
 
-/* Enemy is of type Character and represents bugs which kill the hero */
-// Enemies our player must avoid
+/**
+ *  Enemy is of type Character and represents bugs which kill the hero.
+ *
+ **/
+
 var Enemy = function() {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
@@ -49,8 +67,11 @@ var Enemy = function() {
 Enemy.prototype = Object.create(Character.prototype);
 Enemy.prototype.constructor = Enemy;
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
+/**
+ * Update the enemy's position, required method for game
+ * Parameter: dt, a time delta between ticks
+  */
+
 Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
@@ -69,10 +90,10 @@ Enemy.prototype.update = function(dt) {
     }
 };
 
-/* Player is of type character and represents the games hero */
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+/**
+ *  Player is of type character and represents the games hero
+ *  This class requires an handleInput() method to allow moving the player.
+ *  */
 var Player = function() {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
@@ -93,7 +114,6 @@ Player.prototype.constructor = Player;
 *   It checks for obstacles on each move
 *   It also checks to see if this is the goal cell or a Gem which means bonus points
 * */
-
 Player.prototype.handleInput = function(key) {
     /* Move left by one cell if no obstacles */
     if (key === 'left') {
@@ -133,6 +153,7 @@ Player.prototype.handleInput = function(key) {
             alert("You Won! Your score : " + score);
             location.reload();
         }
+        /* We found a Gem, credit the player with points and remove the gem from the list */
         score += 10;
         gems.splice(gemIndex, 1);
         gemIndices.splice(gemIndex, 1);
@@ -140,7 +161,9 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
-/* Obstacle is of type Character and represents cell which cannot be occupied by the player */
+/**
+ *  Obstacle is of type Character and represents cell which cannot be occupied by the player
+ *  */
 var Obstacle = function(x, y) {
     this.sprite = 'images/Rock.png';
     this.x = x;
@@ -201,9 +224,17 @@ function isGem(x, y) {
     return gemIndices.indexOf(x + "" + y) !== -1;
 }
 
-/* Code below will initialize and start the Games enemies, player, obstacles and gems */
+/**
+ *  Code below will initialize and start the Games enemies, player, obstacles and gems
+ *  */
 var allEnemies, player, obstacleIndices, obstacles, gemIndices, gems;
-
+/**
+ * Here is where we actually create the Enemies, Player, Obstacles and Gems
+ * We also Initialize the positions for all these characters
+ * We Set the Goal where the player should reach to Win!
+ *
+ * This will also serve as a "reset" when the Player wins or loses
+ */
 function startGame() {
     // Now instantiate your objects.
     // Place all enemy objects in an array called allEnemies
@@ -237,6 +268,7 @@ function startGame() {
         gemIndices[index] = gems[index].getCellX() + "" + gems[index].getCellY();
     }
 
+    /* Set a Goal where the player should reach to Win */
     gems[2].setKeyGoal();
     score = 0;
     document.getElementById("score").innerHTML = 0;

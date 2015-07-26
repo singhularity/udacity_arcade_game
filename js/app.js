@@ -58,9 +58,8 @@ Enemy.prototype.update = function(dt) {
 
     if (this.getCellX() === player.getCellX() && this.getCellY() === player.getCellY())
     {
-        console.log("You Lost!");
-        player.x = playerStartX;
-        player.y = playerStartY;
+        alert("You Lost!");
+        startGame();
     }
 };
 
@@ -131,6 +130,7 @@ Player.prototype.handleInput = function(key){
         if(gems[gemIndex].isKey)
         {
             alert("You Won!");
+            startGame();
         }
         gems.splice(gemIndex, 1);
         gemIndices.splice(gemIndex, 1)
@@ -163,30 +163,32 @@ Gem.prototype.setKeyGoal = function () {
     this.isKey = true;
 };
 
+var allEnemies, player, obstacleIndices, obstacles, gemIndices, gems;
+
+function startGame() {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var allEnemies = [new Enemy(), new Enemy(), new Enemy()];
-var player = new Player();
-var obstacleLocations = [[0, 42], [202, 208]];
-var obstacleIndices = [];
-var obstacles = [];
-for(var index = 0; index < obstacleLocations.length; index++)
-{
-    obstacles[index] = new Obstacle(obstacleLocations[index][0], obstacleLocations[index][1]);
-    obstacleIndices[index] = obstacles[index].getCellX() + "" + obstacles[index].getCellY();
-};
+    allEnemies = [new Enemy(), new Enemy(), new Enemy()];
+    player = new Player();
+    var obstacleLocations = [[0, 42], [202, 208]];
+    obstacleIndices = [];
+    obstacles = [];
+    for (var index = 0; index < obstacleLocations.length; index++) {
+        obstacles[index] = new Obstacle(obstacleLocations[index][0], obstacleLocations[index][1]);
+        obstacleIndices[index] = obstacles[index].getCellX() + "" + obstacles[index].getCellY();
+    }
 
-var gemLocations = [[0, 208], [404, 125], [202, 42]];
-var gemIndices = [];
-var gems = [];
-for(var index = 0; index < gemLocations.length; index++)
-{
-    gems[index] = new Gem(gemLocations[index][0], gemLocations[index][1]);
-    gemIndices[index] = gems[index].getCellX() + "" + gems[index].getCellY();
-};
+    var gemLocations = [[0, 208], [404, 125], [202, 42]];
+    gemIndices = [];
+    gems = [];
+    for (var index = 0; index < gemLocations.length; index++) {
+        gems[index] = new Gem(gemLocations[index][0], gemLocations[index][1]);
+        gemIndices[index] = gems[index].getCellX() + "" + gems[index].getCellY();
+    }
 
-gems[2].setKeyGoal();
+    gems[2].setKeyGoal();
+}
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {

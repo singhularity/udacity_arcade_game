@@ -6,6 +6,8 @@ var playerStartY = 380;
 
 var minSpeed = 200;
 
+var score = 0;
+
 /*Character Represents any renderable object in the Game*/
 var Character = function(){};
 
@@ -132,11 +134,14 @@ Player.prototype.handleInput = function(key){
         var gemIndex = gemIndices.indexOf(this.getCellX() + "" + this.getCellY());
         if(gems[gemIndex].isKey)
         {
-            alert("You Won!");
-            startGame();
+            score += 100;
+            alert("You Won! Your score : " + score);
+            location.reload();
         }
+        score += 10;
         gems.splice(gemIndex, 1);
-        gemIndices.splice(gemIndex, 1)
+        gemIndices.splice(gemIndex, 1);
+        document.getElementById("score").innerHTML = score;
     }
 };
 
@@ -232,4 +237,6 @@ function startGame() {
     }
 
     gems[2].setKeyGoal();
+    score = 0;
+    document.getElementById("score").innerHTML = 0;
 }

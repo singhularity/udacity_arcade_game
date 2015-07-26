@@ -19,12 +19,12 @@ Character.prototype.render = function() {
 
 //Cell position X of the Character on the Grid
 Character.prototype.getCellX = function() {
-    return getX(this.x+50);
+    return getX(this.x + 50);
 };
 
 //Cell position Y of the Character on the Grid
 Character.prototype.getCellY = function() {
-    return getY(this.y+42);
+    return getY(this.y + 42);
 };
 
 //Update the position of the Character on the screen
@@ -40,8 +40,8 @@ var Enemy = function() {
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     var pos = Math.floor(Math.random() * 3);
-    this.x = CELL_WIDTH/2;
-    this.y = CELL_HEIGHT/2 + (CELL_HEIGHT * pos);
+    this.x = CELL_WIDTH / 2;
+    this.y = CELL_HEIGHT / 2 + (CELL_HEIGHT * pos);
     this.speed = MIN_SPEED + (pos * MIN_SPEED);
 };
 
@@ -55,13 +55,15 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    if(this.x >= ctx.canvas.width)
+    if (this.x >= ctx.canvas.width)
         this.x = 1;
     else
-        this.x = this.x + (this.speed*dt);
+        this.x = this.x + (this.speed * dt);
 
-    if (this.getCellX() === player.getCellX() && this.getCellY() === player.getCellY())
-    {
+    /* The collision logic is implemented here, on every update of the enemy position
+       we check if this enemy object happens to be in the same cell as the Player Object
+     */
+    if (this.getCellX() === player.getCellX() && this.getCellY() === player.getCellY()) {
         alert("You Lost!");
         startGame();
     }
@@ -86,48 +88,47 @@ var Player = function() {
 Player.prototype = Object.create(Character.prototype);
 Player.prototype.constructor = Player;
 
+/* The handleInput method responds based on the direction in which the player intends to move
+*   It does bound check on each move
+*   It checks for obstacles on each move
+*   It also checks to see if this is the goal cell or a Gem which means bonus points
+* */
+
 Player.prototype.handleInput = function(key) {
-    if (key === 'left')
-    {
+    /* Move left by one cell if no obstacles */
+    if (key === 'left') {
         var tempWidth = this.x - CELL_WIDTH;
         var newX = getX(tempWidth);
         var newY = getY(this.y);
-        if(tempWidth > -CELL_WIDTH && isObstacle(newX, newY)) {
+        if (tempWidth > -CELL_WIDTH && isObstacle(newX, newY)) {
             this.x = tempWidth;
         }
 
-    }
-    else if (key === 'right')
-    {
+    } else if (key === 'right') {
         var tempWidth = this.x + CELL_WIDTH;
         var newX = getX(tempWidth);
         var newY = getY(this.y);
-        if(tempWidth < ctx.canvas.width - CELL_WIDTH && isObstacle(newX, newY)) {
+        if (tempWidth < ctx.canvas.width - CELL_WIDTH && isObstacle(newX, newY)) {
             this.x = tempWidth;
         }
-    }
-    else if (key === 'up')
-    {
+    } else if (key === 'up') {
         var tempHeight = this.y - CELL_HEIGHT;
         var newX = getX(this.x);
         var newY = getY(tempHeight);
-        if(tempHeight > 0 && isObstacle(newX, newY)) {
+        if (tempHeight > 0 && isObstacle(newX, newY)) {
             this.y = tempHeight;
         }
-    }
-    else
-    {
+    } else {
         var tempHeight = this.y + CELL_HEIGHT;
-        if(tempHeight < ctx.canvas.width - CELL_HEIGHT  && isObstacle(newX, newY)) {
+        if (tempHeight < ctx.canvas.width - CELL_HEIGHT && isObstacle(newX, newY)) {
             this.y = tempHeight;
         }
     }
-
-    if (isGem(this.getCellX(), this.getCellY()))
-    {
+    /* Check if we found a Gem after the Move! */
+    if (isGem(this.getCellX(), this.getCellY())) {
         var gemIndex = gemIndices.indexOf(this.getCellX() + "" + this.getCellY());
-        if(gems[gemIndex].isKey)
-        {
+        /* Also check if this happens to be the Goal cell */
+        if (gems[gemIndex].isKey) {
             score += 100;
             alert("You Won! Your score : " + score);
             location.reload();
@@ -139,7 +140,7 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
-/* Obstacle is of type Character */
+/* Obstacle is of type Character and represents cell which cannot be occupied by the player */
 var Obstacle = function(x, y) {
     this.sprite = 'images/Rock.png';
     this.x = x;
@@ -150,7 +151,7 @@ var Obstacle = function(x, y) {
 Obstacle.prototype = Object.create(Character.prototype);
 Obstacle.prototype.constructor = Obstacle;
 
-/* Gem is of type Character and represents bonus points */
+/* Gem is of type Character and represents bonus points and we set one of them as the Goal */
 var Gem = function(x, y) {
     this.sprite = 'images/Gem Blue.png';
     this.x = x;
@@ -180,22 +181,22 @@ document.addEventListener('keyup', function(e) {
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
-//Cell position X of the Character on the Grid
+//Cell position X of the Character on the Grid extracted from the actual position on the canvas
 function getX(x) {
-    return Math.ceil((x+50)/CELL_WIDTH)
+    return Math.ceil((x + 50) / CELL_WIDTH)
 }
 
-//Cell position Y of the Character on the Grid
+//Cell position Y of the Character on the Grid extracted from the actual position on the canvas
 function getY(y) {
-    return Math.ceil((y+42)/CELL_HEIGHT);
+    return Math.ceil((y + 42) / CELL_HEIGHT);
 }
 
-//Check if cell is an obstacle
+//Check if cell is an obstacle from the obstacles list
 function isObstacle(x, y) {
     return obstacleIndices.indexOf(x + "" + y) === -1;
 }
 
-//Check if cell has a Gem
+//Check if cell has a Gem from the gems list
 function isGem(x, y) {
     return gemIndices.indexOf(x + "" + y) !== -1;
 }
@@ -204,22 +205,33 @@ function isGem(x, y) {
 var allEnemies, player, obstacleIndices, obstacles, gemIndices, gems;
 
 function startGame() {
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
+    // Now instantiate your objects.
+    // Place all enemy objects in an array called allEnemies
+    // Place the player object in a variable called player
     allEnemies = [new Enemy(), new Enemy(), new Enemy()];
     player = new Player();
-    var obstacleLocations = [[0, 42], [202, 208]];
+    var obstacleLocations = [
+        [0, 42],
+        [202, 208]
+    ];
     obstacleIndices = [];
     obstacles = [];
+
+    /* Create Obstacles from the positions */
     for (var index = 0; index < obstacleLocations.length; index++) {
         obstacles[index] = new Obstacle(obstacleLocations[index][0], obstacleLocations[index][1]);
         obstacleIndices[index] = obstacles[index].getCellX() + "" + obstacles[index].getCellY();
     }
 
-    var gemLocations = [[0, 208], [404, 125], [202, 42]];
+    var gemLocations = [
+        [0, 208],
+        [404, 125],
+        [202, 42]
+    ];
     gemIndices = [];
     gems = [];
+
+    /* Create Gems from the positions */
     for (var index = 0; index < gemLocations.length; index++) {
         gems[index] = new Gem(gemLocations[index][0], gemLocations[index][1]);
         gemIndices[index] = gems[index].getCellX() + "" + gems[index].getCellY();

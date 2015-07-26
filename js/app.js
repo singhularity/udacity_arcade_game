@@ -1,16 +1,41 @@
+var Character = function(){};
+
+// Draw the Character on the screen, required method for game
+Character.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+//Cell position X of the Character on the Grid
+Character.prototype.getCellX = function()
+{
+    return Math.ceil((this.x+cellWidth/2)/cellWidth)
+};
+
+//Cell position Y of the Character on the Grid
+Character.prototype.getCellY = function()
+{
+    return Math.ceil((this.y+cellHeight/2)/cellHeight);
+};
+
+//Update the position of the Character on the screen
+Character.prototype.update = function(dt) {};
+
 // Enemies our player must avoid
-var Enemy = function(pos, speed) {
+var Enemy = function() {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.pos = pos;
+    var pos = Math.floor(Math.random() * 3);
     this.x = 50;
     this.y = 42 + (83 * pos);
-    this.speed = speed;
+    this.speed = 200 + (pos * 200);
 };
+
+//Inherit from Character
+Enemy.prototype = Object.create(Character.prototype);
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -31,11 +56,6 @@ Enemy.prototype.update = function(dt) {
     }
 };
 
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
@@ -51,6 +71,9 @@ var Player = function() {
     //console.log("x - " + Math.ceil((this.x+101)/101));
     //console.log("y - " + Math.ceil((this.y+83)/83));
 };
+
+//Inherit from Character
+Player.prototype = Object.create(Character.prototype);
 
 Player.prototype.handleInput = function(key){
     if (key === 'left')
@@ -89,35 +112,12 @@ Player.prototype.handleInput = function(key){
             //console.log("y - " + Math.ceil((this.y+83)/83));
         }
     }
-    //if(enemyPositions.indexOf(Math.ceil((this.x+101)/101)) > -1 &&
-    //    Math.ceil((allEnemies[enemyPositions.indexOf(Math.ceil((this.x+101)/101))].y+83)/83) == Math.ceil((this.y+83)/83))
-    //{
-    //    console.log("Collission");
-    //}
-    //console.log("x - " + Math.ceil((this.x+101)/101));
-    //console.log("y - " + Math.ceil((this.y+83)/83));
-
 };
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Player.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-    this.x;
-};
-
-
-// Draw the enemy on the screen, required method for game
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var enemyPositions = [1, 1];
-var allEnemies = [new Enemy(0, 200), new Enemy(1, 400)];
+var allEnemies = [new Enemy(), new Enemy(), new Enemy()];
 var player = new Player();
 
 

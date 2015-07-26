@@ -21,7 +21,9 @@ var score = 0;
  * Character Represents any object in the Game that can be Rendered.
  * It will act as the "Parent" for all other Characters in the Game
  * */
-var Character = function() {};
+var Character = function() {
+    return undefined;
+};
 
 /**
  * Draw the Character on the screen using Resources, required method for game
@@ -42,7 +44,9 @@ Character.prototype.getCellY = function() {
 };
 
 //Update the position of the Character on the screen
-Character.prototype.update = function(dt) {};
+Character.prototype.update = function() {
+    return undefined;
+};
 
 /**
  *  Enemy is of type Character and represents bugs which kill the hero.
@@ -75,10 +79,11 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    if (this.x >= ctx.canvas.width)
+    if (this.x >= ctx.canvas.width) {
         this.x = 1;
-    else
+    } else {
         this.x = this.x + (this.speed * dt);
+    }
 
     /* The collision logic is implemented here, on every update of the enemy position
      we check if this enemy object happens to be in the same cell as the Player Object
@@ -115,30 +120,36 @@ Player.prototype.constructor = Player;
  * */
 Player.prototype.handleInput = function(key) {
     /* Move left by one cell if no obstacles */
+    var tempWidth;
+    var tempHeight;
+    var newX;
+    var newY;
     if (key === 'left') {
-        var tempWidth = this.x - CELL_WIDTH;
-        var newX = getX(tempWidth);
-        var newY = getY(this.y);
+        tempWidth = this.x - CELL_WIDTH;
+        newX = getX(tempWidth);
+        newY = getY(this.y);
         if (tempWidth > -CELL_WIDTH && isObstacle(newX, newY)) {
             this.x = tempWidth;
         }
 
     } else if (key === 'right') {
-        var tempWidth = this.x + CELL_WIDTH;
-        var newX = getX(tempWidth);
-        var newY = getY(this.y);
+        tempWidth = this.x + CELL_WIDTH;
+        newX = getX(tempWidth);
+        newY = getY(this.y);
         if (tempWidth < ctx.canvas.width - CELL_WIDTH && isObstacle(newX, newY)) {
             this.x = tempWidth;
         }
     } else if (key === 'up') {
-        var tempHeight = this.y - CELL_HEIGHT;
-        var newX = getX(this.x);
-        var newY = getY(tempHeight);
+        tempHeight = this.y - CELL_HEIGHT;
+        newX = getX(this.x);
+        newY = getY(tempHeight);
         if (tempHeight > 0 && isObstacle(newX, newY)) {
             this.y = tempHeight;
         }
     } else {
-        var tempHeight = this.y + CELL_HEIGHT;
+        tempHeight = this.y + CELL_HEIGHT;
+        newX = getX(this.x);
+        newY = getY(tempHeight);
         if (tempHeight < ctx.canvas.width - CELL_HEIGHT && isObstacle(newX, newY)) {
             this.y = tempHeight;
         }
@@ -194,10 +205,10 @@ Gem.prototype.setKeyGoal = function() {
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
+        '37': 'left',
+        '38': 'up',
+        '39': 'right',
+        '40': 'down'
     };
 
     player.handleInput(allowedKeys[e.keyCode]);
@@ -205,7 +216,7 @@ document.addEventListener('keyup', function(e) {
 
 //Cell position X of the Character on the Grid extracted from the actual position on the canvas
 function getX(x) {
-    return Math.ceil((x + 50) / CELL_WIDTH)
+    return Math.ceil((x + 50) / CELL_WIDTH);
 }
 
 //Cell position Y of the Character on the Grid extracted from the actual position on the canvas
@@ -248,7 +259,8 @@ function startGame() {
     obstacles = [];
 
     /* Create Obstacles from the positions */
-    for (var index = 0; index < obstacleLocations.length; index++) {
+    var index;
+    for (index = 0; index < obstacleLocations.length; index += 1) {
         obstacles[index] = new Obstacle(obstacleLocations[index][0], obstacleLocations[index][1]);
         obstacleIndices[index] = obstacles[index].getCellX() + "" + obstacles[index].getCellY();
     }
@@ -262,7 +274,7 @@ function startGame() {
     gems = [];
 
     /* Create Gems from the positions */
-    for (var index = 0; index < gemLocations.length; index++) {
+    for (index = 0; index < gemLocations.length; index += 1) {
         gems[index] = new Gem(gemLocations[index][0], gemLocations[index][1]);
         gemIndices[index] = gems[index].getCellX() + "" + gems[index].getCellY();
     }

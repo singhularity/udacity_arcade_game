@@ -1,3 +1,11 @@
+var cellWidth = 101;
+var cellHeight = 83;
+
+var playerStartX = 200;
+var playerStartY = 380;
+
+var minSpeed = 200;
+
 var Character = function(){};
 
 // Draw the Character on the screen, required method for game
@@ -8,13 +16,13 @@ Character.prototype.render = function() {
 //Cell position X of the Character on the Grid
 Character.prototype.getCellX = function()
 {
-    return Math.ceil((this.x+cellWidth/2)/cellWidth)
+    return Math.ceil((this.x+50)/cellWidth)
 };
 
 //Cell position Y of the Character on the Grid
 Character.prototype.getCellY = function()
 {
-    return Math.ceil((this.y+cellHeight/2)/cellHeight);
+    return Math.ceil((this.y+42)/cellHeight);
 };
 
 //Update the position of the Character on the screen
@@ -29,9 +37,9 @@ var Enemy = function() {
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     var pos = Math.floor(Math.random() * 3);
-    this.x = 50;
-    this.y = 42 + (83 * pos);
-    this.speed = 200 + (pos * 200);
+    this.x = cellWidth/2;
+    this.y = cellHeight/2 + (cellHeight * pos);
+    this.speed = minSpeed + (pos * minSpeed);
 };
 
 //Inherit from Character
@@ -48,11 +56,11 @@ Enemy.prototype.update = function(dt) {
     else
         this.x = this.x + (this.speed*dt);
 
-    if ((Math.ceil((this.x+50)/101)) === Math.ceil((player.x+101)/101) && Math.ceil((this.y+42)/83) === Math.ceil((player.y+83)/83))
+    if (this.getCellX() === player.getCellX() && this.getCellY() === player.getCellY())
     {
         console.log("You Lost!");
-        player.x = 200;
-        player.y = 380;
+        player.x = playerStartX;
+        player.y = playerStartY;
     }
 };
 
@@ -66,8 +74,8 @@ var Player = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/char-boy.png';
-    this.x = 200;
-    this.y = 380;
+    this.x = playerStartX;
+    this.y = playerStartY;
     //console.log("x - " + Math.ceil((this.x+101)/101));
     //console.log("y - " + Math.ceil((this.y+83)/83));
 };
@@ -78,27 +86,27 @@ Player.prototype = Object.create(Character.prototype);
 Player.prototype.handleInput = function(key){
     if (key === 'left')
     {
-        if(this.x - 101 > -101) {
-            this.x -= 101;
+        if(this.x - cellWidth > -cellWidth) {
+            this.x -= cellWidth;
             //console.log("x - " + Math.ceil((this.x+101)/101));
         }
 
     }
     else if (key === 'right')
     {
-        if(this.x + 101 < ctx.canvas.width - 101) {
-            this.x += 101;
+        if(this.x + cellWidth < ctx.canvas.width - cellWidth) {
+            this.x += cellWidth;
             //console.log("x - " + Math.ceil((this.x+101)/101));
         }
     }
     else if (key === 'up')
     {
-        if(this.y - 83 > -83) {
-            this.y -= 83;
+        if(this.y - cellHeight > -cellHeight) {
+            this.y -= cellHeight;
             //console.log("y - " + Math.ceil((this.y+83)/83));
-            if (this.y + 83 <= 83) {
-                this.y = 380;
-                this.x = 200;
+            if (this.y + cellHeight <= cellHeight) {
+                this.x = playerStartX;
+                this.y = playerStartY;
                 console.log("You won!")
             }
 
@@ -107,8 +115,8 @@ Player.prototype.handleInput = function(key){
     }
     else
     {
-        if(this.y + 83 < (ctx.canvas.width - 83)) {
-            this.y += 83;
+        if(this.y + cellHeight < (ctx.canvas.width - cellHeight)) {
+            this.y += cellHeight;
             //console.log("y - " + Math.ceil((this.y+83)/83));
         }
     }

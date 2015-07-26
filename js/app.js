@@ -128,6 +128,10 @@ Player.prototype.handleInput = function(key){
     if (isGem(this.getCellX(), this.getCellY()))
     {
         var gemIndex = gemIndices.indexOf(this.getCellX() + "" + this.getCellY());
+        if(gems[gemIndex].isKey)
+        {
+            alert("You Won!");
+        }
         gems.splice(gemIndex, 1);
         gemIndices.splice(gemIndex, 1)
     }
@@ -148,10 +152,16 @@ var Gem = function(x, y)
     this.sprite = 'images/Gem Blue.png';
     this.x = x;
     this.y = y;
+    this.isGoal = false;
 };
 
 //Inherit from Character
 Gem.prototype = Object.create(Character.prototype);
+
+Gem.prototype.setKeyGoal = function () {
+    this.sprite = 'images/Key.png';
+    this.isKey = true;
+};
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -167,7 +177,7 @@ for(var index = 0; index < obstacleLocations.length; index++)
     obstacleIndices[index] = obstacles[index].getCellX() + "" + obstacles[index].getCellY();
 };
 
-var gemLocations = [[0, 208], [404, 125]];
+var gemLocations = [[0, 208], [404, 125], [202, 42]];
 var gemIndices = [];
 var gems = [];
 for(var index = 0; index < gemLocations.length; index++)
@@ -176,6 +186,7 @@ for(var index = 0; index < gemLocations.length; index++)
     gemIndices[index] = gems[index].getCellX() + "" + gems[index].getCellY();
 };
 
+gems[2].setKeyGoal();
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {

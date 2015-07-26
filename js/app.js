@@ -6,7 +6,6 @@
  * We assume a fixed size grid and there is no support yet for a Dynamic Grid.
  *
  */
-
 "use strict";
 var CELL_WIDTH = 101;
 var CELL_HEIGHT = 83;
@@ -26,7 +25,7 @@ var Character = function() {};
 
 /**
  * Draw the Character on the screen using Resources, required method for game
-  */
+ */
 
 Character.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -70,7 +69,7 @@ Enemy.prototype.constructor = Enemy;
 /**
  * Update the enemy's position, required method for game
  * Parameter: dt, a time delta between ticks
-  */
+ */
 
 Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
@@ -82,7 +81,7 @@ Enemy.prototype.update = function(dt) {
         this.x = this.x + (this.speed * dt);
 
     /* The collision logic is implemented here, on every update of the enemy position
-       we check if this enemy object happens to be in the same cell as the Player Object
+     we check if this enemy object happens to be in the same cell as the Player Object
      */
     if (this.getCellX() === player.getCellX() && this.getCellY() === player.getCellY()) {
         alert("You Lost!");
@@ -110,10 +109,10 @@ Player.prototype = Object.create(Character.prototype);
 Player.prototype.constructor = Player;
 
 /* The handleInput method responds based on the direction in which the player intends to move
-*   It does bound check on each move
-*   It checks for obstacles on each move
-*   It also checks to see if this is the goal cell or a Gem which means bonus points
-* */
+ *   It does bound check on each move
+ *   It checks for obstacles on each move
+ *   It also checks to see if this is the goal cell or a Gem which means bonus points
+ * */
 Player.prototype.handleInput = function(key) {
     /* Move left by one cell if no obstacles */
     if (key === 'left') {

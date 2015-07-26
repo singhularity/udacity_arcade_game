@@ -1,15 +1,15 @@
-var cellWidth = 101;
-var cellHeight = 83;
+var CELL_WIDTH = 101;
+var CELL_HEIGHT = 83;
 
-var playerStartX = 200;
-var playerStartY = 380;
+var PLAYER_START_X = 200;
+var PLAYER_START_Y = 380;
 
-var minSpeed = 200;
+var MIN_SPEED = 200;
 
 var score = 0;
 
 /*Character Represents any renderable object in the Game*/
-var Character = function(){};
+var Character = function() {};
 
 // Draw the Character on the screen, required method for game
 Character.prototype.render = function() {
@@ -17,14 +17,12 @@ Character.prototype.render = function() {
 };
 
 //Cell position X of the Character on the Grid
-Character.prototype.getCellX = function()
-{
+Character.prototype.getCellX = function() {
     return getX(this.x+50);
 };
 
 //Cell position Y of the Character on the Grid
-Character.prototype.getCellY = function()
-{
+Character.prototype.getCellY = function() {
     return getY(this.y+42);
 };
 
@@ -41,13 +39,14 @@ var Enemy = function() {
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     var pos = Math.floor(Math.random() * 3);
-    this.x = cellWidth/2;
-    this.y = cellHeight/2 + (cellHeight * pos);
-    this.speed = minSpeed + (pos * minSpeed);
+    this.x = CELL_WIDTH/2;
+    this.y = CELL_HEIGHT/2 + (CELL_HEIGHT * pos);
+    this.speed = MIN_SPEED + (pos * MIN_SPEED);
 };
 
 //Inherit from Character
 Enemy.prototype = Object.create(Character.prototype);
+Enemy.prototype.constructor = Enemy;
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -78,53 +77,52 @@ var Player = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/char-boy.png';
-    this.x = playerStartX;
-    this.y = playerStartY;
-    //console.log("x - " + Math.ceil((this.x+101)/101));
-    //console.log("y - " + Math.ceil((this.y+83)/83));
+    this.x = PLAYER_START_X;
+    this.y = PLAYER_START_Y;
 };
 
 //Inherit from Character
 Player.prototype = Object.create(Character.prototype);
+Player.prototype.constructor = Player;
 
-Player.prototype.handleInput = function(key){
+Player.prototype.handleInput = function(key) {
     if (key === 'left')
     {
-        var tempWidth = this.x - cellWidth;
+        var tempWidth = this.x - CELL_WIDTH;
         var newX = getX(tempWidth);
         var newY = getY(this.y);
-        if(tempWidth > -cellWidth && isObstacle(newX, newY)) {
+        if(tempWidth > -CELL_WIDTH && isObstacle(newX, newY)) {
             this.x = tempWidth;
         }
 
     }
     else if (key === 'right')
     {
-        var tempWidth = this.x + cellWidth;
+        var tempWidth = this.x + CELL_WIDTH;
         var newX = getX(tempWidth);
         var newY = getY(this.y);
-        if(tempWidth < ctx.canvas.width - cellWidth && isObstacle(newX, newY)) {
+        if(tempWidth < ctx.canvas.width - CELL_WIDTH && isObstacle(newX, newY)) {
             this.x = tempWidth;
         }
     }
     else if (key === 'up')
     {
-        var tempHeight = this.y - cellHeight;
+        var tempHeight = this.y - CELL_HEIGHT;
         var newX = getX(this.x);
         var newY = getY(tempHeight);
-        if(tempHeight > -cellHeight && isObstacle(newX, newY)) {
+        if(tempHeight > -CELL_HEIGHT && isObstacle(newX, newY)) {
             this.y = tempHeight;
-            if (this.y + cellHeight <= cellHeight) {
-                this.x = playerStartX;
-                this.y = playerStartY;
+            if (this.y + CELL_HEIGHT <= CELL_HEIGHT) {
+                this.x = PLAYER_START_X;
+                this.y = PLAYER_START_Y;
                 console.log("You won!")
             }
         }
     }
     else
     {
-        var tempHeight = this.y + cellHeight;
-        if(tempHeight < ctx.canvas.width - cellHeight  && isObstacle(newX, newY)) {
+        var tempHeight = this.y + CELL_HEIGHT;
+        if(tempHeight < ctx.canvas.width - CELL_HEIGHT  && isObstacle(newX, newY)) {
             this.y = tempHeight;
         }
     }
@@ -146,8 +144,7 @@ Player.prototype.handleInput = function(key){
 };
 
 /* Obstacle is of type Character */
-var Obstacle = function(x, y)
-{
+var Obstacle = function(x, y) {
     this.sprite = 'images/Rock.png';
     this.x = x;
     this.y = y;
@@ -155,11 +152,10 @@ var Obstacle = function(x, y)
 
 //Inherit from Character
 Obstacle.prototype = Object.create(Character.prototype);
-
+Obstacle.prototype.constructor = Obstacle;
 
 /* Gem is of type Character and represents bonus points */
-var Gem = function(x, y)
-{
+var Gem = function(x, y) {
     this.sprite = 'images/Gem Blue.png';
     this.x = x;
     this.y = y;
@@ -168,8 +164,9 @@ var Gem = function(x, y)
 
 //Inherit from Character
 Gem.prototype = Object.create(Character.prototype);
+Gem.prototype.constructor = Gem;
 
-Gem.prototype.setKeyGoal = function () {
+Gem.prototype.setKeyGoal = function() {
     this.sprite = 'images/Key.png';
     this.isKey = true;
 };
@@ -188,26 +185,22 @@ document.addEventListener('keyup', function(e) {
 });
 
 //Cell position X of the Character on the Grid
-function getX(x)
-{
-    return Math.ceil((x+50)/cellWidth)
-};
+function getX(x) {
+    return Math.ceil((x+50)/CELL_WIDTH)
+}
 
 //Cell position Y of the Character on the Grid
-function getY(y)
-{
-    return Math.ceil((y+42)/cellHeight);
-};
+function getY(y) {
+    return Math.ceil((y+42)/CELL_HEIGHT);
+}
 
 //Check if cell is an obstacle
-function isObstacle(x, y)
-{
+function isObstacle(x, y) {
     return obstacleIndices.indexOf(x + "" + y) === -1;
 }
 
 //Check if cell has a Gem
-function isGem(x, y)
-{
+function isGem(x, y) {
     return gemIndices.indexOf(x + "" + y) !== -1;
 }
 

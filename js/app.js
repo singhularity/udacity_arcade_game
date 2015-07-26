@@ -87,41 +87,49 @@ Player.prototype.handleInput = function(key){
     if (key === 'left')
     {
         var tempWidth = this.x - cellWidth;
-        if(tempWidth > -cellWidth && obstacleIndices.indexOf(getX(tempWidth)+ "" + getY(this.y)) === -1) {
+        var newX = getX(tempWidth);
+        var newY = getY(this.y);
+        if(tempWidth > -cellWidth && isObstacle(newX, newY)) {
             this.x = tempWidth;
-            //console.log("x - " + Math.ceil((this.x+101)/101));
         }
 
     }
     else if (key === 'right')
     {
         var tempWidth = this.x + cellWidth;
-        if(tempWidth < ctx.canvas.width - cellWidth && obstacleIndices.indexOf(getX(tempWidth) + "" + getY(this.y)) === -1) {
+        var newX = getX(tempWidth);
+        var newY = getY(this.y);
+        if(tempWidth < ctx.canvas.width - cellWidth && isObstacle(newX, newY)) {
             this.x = tempWidth;
-            //console.log("x - " + Math.ceil((this.x+101)/101));
         }
     }
     else if (key === 'up')
     {
         var tempHeight = this.y - cellHeight;
-        if(tempHeight > -cellHeight   && obstacleIndices.indexOf(getX(this.x) + "" + getY(tempHeight)) === -1) {
+        var newX = getX(this.x);
+        var newY = getY(tempHeight);
+        if(tempHeight > -cellHeight && isObstacle(newX, newY)) {
             this.y = tempHeight;
-            //console.log("y - " + Math.ceil((this.y+83)/83));
             if (this.y + cellHeight <= cellHeight) {
                 this.x = playerStartX;
                 this.y = playerStartY;
                 console.log("You won!")
             }
-
         }
-
     }
     else
     {
         var tempHeight = this.y + cellHeight;
-        if(tempHeight < ctx.canvas.width - cellHeight  && obstacleIndices.indexOf(getX(this.x) + "" + getY(tempHeight)) === -1) {
+        if(tempHeight < ctx.canvas.width - cellHeight  && isObstacle(newX, newY)) {
             this.y = tempHeight;
         }
+    }
+
+    if (isGem(this.getCellX(), this.getCellY()))
+    {
+        var gemIndex = gemIndices.indexOf(this.getCellX() + "" + this.getCellY());
+        gems.splice(gemIndex, 1);
+        gemIndices.splice(gemIndex, 1)
     }
 };
 
@@ -135,6 +143,16 @@ var Obstacle = function(x, y)
 //Inherit from Character
 Obstacle.prototype = Object.create(Character.prototype);
 
+var Gem = function(x, y)
+{
+    this.sprite = 'images/Gem Blue.png';
+    this.x = x;
+    this.y = y;
+};
+
+//Inherit from Character
+Gem.prototype = Object.create(Character.prototype);
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
@@ -147,6 +165,15 @@ for(var index = 0; index < obstacleLocations.length; index++)
 {
     obstacles[index] = new Obstacle(obstacleLocations[index][0], obstacleLocations[index][1]);
     obstacleIndices[index] = obstacles[index].getCellX() + "" + obstacles[index].getCellY();
+};
+
+var gemLocations = [[0, 208], [404, 125]];
+var gemIndices = [];
+var gems = [];
+for(var index = 0; index < gemLocations.length; index++)
+{
+    gems[index] = new Gem(gemLocations[index][0], gemLocations[index][1]);
+    gemIndices[index] = gems[index].getCellX() + "" + gems[index].getCellY();
 };
 
 // This listens for key presses and sends the keys to your
@@ -173,3 +200,13 @@ function getY(y)
 {
     return Math.ceil((y+42)/cellHeight);
 };
+
+function isObstacle(x, y)
+{
+    return obstacleIndices.indexOf(x + "" + y) === -1;
+}
+
+function isGem(x, y)
+{
+    return gemIndices.indexOf(x + "" + y) !== -1;
+}

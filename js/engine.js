@@ -157,6 +157,10 @@ var Engine = (function(global) {
         obstacles.forEach(function(obstacle) {
             obstacle.render();
         });
+
+        gems.forEach(function(obstacle) {
+            obstacle.render();
+        });
     }
 
     /* This function does nothing but it could have been a good place to
